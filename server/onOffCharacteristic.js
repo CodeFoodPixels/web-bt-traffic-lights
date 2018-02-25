@@ -33,7 +33,7 @@ class onOffCharacteristic extends bleno.Characteristic {
     }
 
     onReadRequest(offset, callback) {
-        callback(this.RESULT_SUCCESS, this._value);
+        callback(this.RESULT_SUCCESS, this._value ? `1` : `0`);
     }
 
     onWriteRequest(data, offset, withoutResponse, callback) {
