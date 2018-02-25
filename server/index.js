@@ -5,7 +5,7 @@ const onOffCharacteristic = require(`./onOffCharacteristic.js`)
 
 bleno.on(`stateChange`, (state) => {
     if (state === `poweredOn`) {
-        bleno.startAdvertising('test', ['764ca00c-1997-11e8-accf-0ed5f89f718b']);
+        bleno.startAdvertising('Traffic Lights', ['764ca00c-1997-11e8-accf-0ed5f89f718b']);
     } else {
         bleno.stopAdvertising();
     }

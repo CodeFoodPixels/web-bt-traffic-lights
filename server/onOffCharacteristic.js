@@ -2,6 +2,11 @@
 
 const bleno = require(`bleno`);
 const util = require('util');
+const LED = require(`rpi-ws281x-native`);
+
+const RED = 0xff0000;
+const AMBER = 0xffbf00;
+const GREEN = 0x00ff00;
 
 class onOffCharacteristic extends bleno.Characteristic {
     constructor() {
@@ -12,6 +17,19 @@ class onOffCharacteristic extends bleno.Characteristic {
         });
 
         this._value = false;
+        this.pixelData = new Uint32Array(3);
+
+        LED.init(3);
+
+        this.pixelData[0] = 0;
+        this.pixelData[1] = 0;
+        this.pixelData[2] = RED;
+        LED.render(this.pixelData);
+
+        process.on('SIGINT', function () {
+            LED.reset();
+            process.nextTick(function () { process.exit(0); });
+        });
     }
 
     onReadRequest(offset, callback) {
@@ -24,16 +42,28 @@ class onOffCharacteristic extends bleno.Characteristic {
         callback(this.RESULT_SUCCESS);
 
         if (this._value === false && newVal === true) {
-            console.log('red and amber');
+            this.pixelData[0] = 0;
+            this.pixelData[1] = AMBER;
+            this.pixelData[2] = RED;
+            LED.render(this.pixelData);
 
             setTimeout(() => {
-                console.log('green')
+                this.pixelData[0] = GREEN;
+                this.pixelData[1] = 0;
+                this.pixelData[2] = 0;
+                LED.render(this.pixelData);
             }, 2000);
         } else if (this._value === true && newVal === false) {
-            console.log('amber');
+            this.pixelData[0] = 0;
+            this.pixelData[1] = AMBER;
+            this.pixelData[2] = 0;
+            LED.render(this.pixelData);
 
             setTimeout(() => {
-                console.log('red')
+                this.pixelData[0] = 0;
+                this.pixelData[1] = 0;
+                this.pixelData[2] = RED;
+                LED.render(this.pixelData);
             }, 3000);
         }
 
